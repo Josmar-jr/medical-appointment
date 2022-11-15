@@ -3,8 +3,14 @@ import { Specialty } from "../../entities/Specialty.entity";
 import { ISpecialtyRepository } from "../specialty.repository";
 
 class SpecialtyRepository implements ISpecialtyRepository {
-  findByName(name: string): Promise<Specialty | undefined> {
-    throw new Error("Method not implemented.");
+  async findByName(name: string): Promise<Specialty | null> {
+    const specialty = await prismaClient.specialty.findUnique({
+      where: {
+        name,
+      },
+    });
+
+    return specialty;
   }
   async save(data: Specialty): Promise<Specialty> {
     const specialty = await prismaClient.specialty.create({

@@ -12,12 +12,23 @@ export class UserPrismaRepository implements IUserRepository {
 
     return user || undefined;
   }
+
   async save(data: User): Promise<User> {
     const user = await prismaClient.user.create({
       data: {
         name: data.name,
         password: data.password,
         username: data.username,
+      },
+    });
+
+    return user;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const user = await prismaClient.user.findUnique({
+      where: {
+        id,
       },
     });
 

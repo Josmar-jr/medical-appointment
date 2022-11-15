@@ -9,6 +9,9 @@ export class UserRepositoryMemory implements IUserRepository {
   private constructor() {
     this.users = [];
   }
+  findById(id: string): Promise<User | null> {
+    throw new Error("Method not implemented.");
+  }
 
   static getInstance(): UserRepositoryMemory {
     if (!UserRepositoryMemory.instance) {
