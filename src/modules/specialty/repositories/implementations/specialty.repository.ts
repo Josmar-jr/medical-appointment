@@ -3,6 +3,15 @@ import { Specialty } from "../../entities/Specialty.entity";
 import { ISpecialtyRepository } from "../specialty.repository";
 
 class SpecialtyRepository implements ISpecialtyRepository {
+  async findById(id: string): Promise<Specialty | null> {
+    const specialty = await prismaClient.specialty.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return specialty
+  }
   async findByName(name: string): Promise<Specialty | null> {
     const specialty = await prismaClient.specialty.findUnique({
       where: {

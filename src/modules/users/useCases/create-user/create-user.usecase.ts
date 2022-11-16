@@ -13,15 +13,10 @@ interface UserRequest {
 export class CreateUserUseCase {
   constructor(
     private userRepository: IUserRepository,
-    private passwordCrypto: IPasswordCrypto
   ) {}
 
   async execute(data: UserRequest) {
-    const user = User.create(data);
-
-    if (!data.username || !data.password) {
-      throw new ParameterRequiredError("Username/password is required.", 422);
-    }
+    const user = await User.create(data);
 
     const existUser = await this.userRepository.findByUsername(data.username);
 
@@ -33,9 +28,6 @@ export class CreateUserUseCase {
       );
     }
 
-    const passwordHashed = await this.passwordCrypto.hash(data.password);
-    user.password = passwordHashed;
-    
     const userCreate = await this.userRepository.save(user);
 
     return userCreate;

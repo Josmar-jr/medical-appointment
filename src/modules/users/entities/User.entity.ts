@@ -1,4 +1,6 @@
 import { randomUUID } from "crypto";
+import { ParameterRequiredError } from "../../../errors/parameter-required.error";
+import { PasswordBcrypt } from "../../../infra/shared/crypto/password.bcrypt";
 
 type IUser = {
   name: string;
@@ -14,6 +16,10 @@ export class User {
   isAdmin: boolean;
 
   private constructor(props: IUser) {
+    if (!props.username || !props.password) {
+      throw new ParameterRequiredError("Username/password is required.", 422);
+    }
+
     this.name = props.name;
     this.username = props.username;
     this.password = props.password;
@@ -21,8 +27,18 @@ export class User {
     this.isAdmin = false;
   }
 
-  static create(props: IUser): User {
-    const user = new User(props);
+  static async create(props: IUser): Promise<User> {
+    if (!props.password) {
+      throw new ParameterRequiredError("Username/password is required", 422);
+    }
+
+    const bcrypt = new PasswordBcrypt();
+    const passwordHashed = await bcrypt.hash(props.password);
+
+    const user = new User({
+      ...props,
+      password: passwordHashed,
+    });
 
     return user;
   }
